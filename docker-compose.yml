@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  sistema_sd:
+    build: .
+    container_name: sistema_sd
+    depends_on:
+      - mongo
+    environment:
+      - MONGO_URL=mongodb://mongo:27017
+    volumes:
+      - ./graficos_local:/app/resultados_graficos  # <-- Esta línea permite que los .png queden en tu máquina
+
+volumes:
+  mongo-data:
