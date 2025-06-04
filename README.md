@@ -43,7 +43,7 @@ Tarea_2_SD/
 ### 1. Clonar el repositorio
 
 ```bash
-git clone https://github.com/Kevin-css/tarea2_sd.git
+git clone https://github.com/Kevin-css/tarea2_sd.git 
 cd tarea2_sd
 ```
 
