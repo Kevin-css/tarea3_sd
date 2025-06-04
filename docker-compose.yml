@@ -17,7 +17,9 @@ services:
     environment:
       - MONGO_URL=mongodb://mongo:27017
     volumes:
-      - ./graficos_local:/app/resultados_graficos  # <-- Esta línea permite que los .png queden en tu máquina
+      - ./exportados:/app/exportados
+      - ./salida_local:/app/salida_local
+      - .:/app
 
 volumes:
   mongo-data:

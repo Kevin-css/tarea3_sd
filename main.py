@@ -2,6 +2,8 @@ from mongodb_client import conectar_mongo
 from generador_eventos import generar_eventos_simulados
 from evaluador import ejecutar_evaluacion
 from config import N_EVENTOS
+from exportador_csv import exportar_eventos_a_csv
+
 
 def main():
     print("🔗 Conectando a MongoDB...")
@@ -14,6 +16,7 @@ def main():
 
     print("🧪 Iniciando evaluación automatizada...")
     ejecutar_evaluacion()
+    exportar_eventos_a_csv()
 
 if __name__ == "__main__":
     main()

@@ -1,29 +1,39 @@
 
-# 🧠 Tarea 1 - Sistemas Distribuidos 2025-1
+# 🧠 Tarea 2 - Sistemas Distribuidos 2025-1
 
-Este proyecto simula un sistema distribuido que recolecta, almacena y consulta eventos de tráfico utilizando herramientas modernas como Python, MongoDB y Docker. Inspirado en el sistema Waze, el sistema permite medir el rendimiento de distintas configuraciones de caché bajo patrones de tráfico simulados mediante distribuciones estadísticas.
+Este proyecto simula un sistema distribuido que recolecta, almacena, consulta y analiza eventos de tráfico utilizando herramientas modernas como Python, MongoDB, Docker y Apache Pig. Inspirado en el sistema Waze, permite evaluar configuraciones de caché y realizar procesamiento distribuido para obtener métricas agregadas relevantes para tomadores de decisiones como la Unidad de Control de Tránsito y municipios de la Región Metropolitana.
+
 
 ---
 
 ## 📦 Estructura del Proyecto
 
 ```
-Tarea_1_SD/
+Tarea_2_SD/
 ├── cache.py
 ├── config.py
 ├── docker-compose.yml
 ├── Dockerfile
 ├── evaluador.py
+├── exportador_csv.py
 ├── generador_eventos.py
 ├── generador_trafico.py
 ├── main.py
 ├── mongodb_client.py
+├── procesar_eventos.pig
 ├── README.md
-└── graficos_local/
-    ├── binomial_LRU.png
-    ├── binomial_LFU.png
-    ├── poisson_LRU.png
-    └── poisson_LFU.png
+├── resultados_graficos/
+│ ├── binomial_LRU.png
+│ ├── binomial_LFU.png
+│ ├── poisson_LRU.png
+│ └── poisson_LFU.png
+├── exportados/
+│ └── eventos.csv
+└── salida_local/
+├── por_comuna/
+├── por_tipo/
+└── por_fecha/
+
 ```
 
 ---
@@ -33,8 +43,8 @@ Tarea_1_SD/
 ### 1. Clonar el repositorio
 
 ```bash
-git clone https://github.com/Kevin-css/tarea1_sd.git
-cd tarea1_sd
+git clone https://github.com/Kevin-css/tarea2_sd.git
+cd tarea2_sd
 ```
 
 ### 2. Ejecutar con Docker Compose
@@ -46,12 +56,15 @@ docker-compose up --build
 Esto levantará dos contenedores:
 
 - `mongo`: Base de datos MongoDB
-- `sistema_sd`: Sistema Python que:
-  - Genera eventos simulados
+- `sistema_sd`: Sistema en Python que:
+  - Genera 10.000 eventos de tráfico con fechas, comunas y tipos variados.
   - Inserta los eventos en MongoDB
-  - Simula tráfico
+  - Simula tráfico y realiza evaluaciones de rendimiento usando caché (LRU y LFU).
   - Evalúa distintas configuraciones de caché
+  - Exporta los eventos a un archivo CSV
   - Genera gráficos con los resultados
+  - Ejecuta automáticamente un script Apache Pig para agrupar y analizar los datos por comuna, tipo de incidente y fecha
+  - Exporta los resultados del procesamiento en Pig a archivos CSV listos para análisis exploratorio
 
 ---
 
@@ -77,7 +90,16 @@ CONFIGS_EVALUACION = {
 
 ## 📊 Resultados
 
-Los gráficos generados se guardan automáticamente en la carpeta `graficos_local/`. Estos muestran la tasa de aciertos (hit rate) según política de caché, tamaño del caché, número de consultas y distribución de tráfico utilizada.
+- Los gráficos generados se guardan automáticamente en la carpeta `graficos_local/`. Estos muestran la tasa de aciertos (hit rate) según política de caché, tamaño del caché, número de consultas y distribución de tráfico utilizada.
+
+- Los resultados agregados para esta parte 2 de Apache Pig se exportan como archivos .csv en la carpeta salida_local/, con las siguientes categorías:
+
+  - `por_comuna`: Total de incidentes por comuna.
+
+  - `por_tipo`: Frecuencia de tipos de incidentes.
+
+  - `por_fecha`: Evolución temporal de los eventos.
+
 
 ---
 
@@ -90,10 +112,16 @@ Los gráficos generados se guardan automáticamente en la carpeta `graficos_loca
 - `cache.py`: Define las políticas LRU y LFU usando `cachetools`
 - `mongodb_client.py`: Conecta a la base de datos MongoDB
 - `config.py`: Permite configurar los parámetros del sistema
+- `procesar_eventos.pig`: Script de procesamiento distribuido en Apache Pig.
+- `exportador_csv.py`: Exporta eventos desde MongoDB a eventos.csv.
+- `Dockerfile`: Conteneriza el sistema, instala Java, Pig y configura entorno.
+- `docker-compose.yml`: Orquesta servicios para MongoDB y sistema Python.
 
 ---
 
 ## 📈 Análisis de Resultados
+
+Parte 1:
 
 - Las tasas de acierto aumentan consistentemente con tamaños mayores de caché.
 - LFU obtiene mejores resultados en distribuciones donde hay eventos repetidos frecuentemente (como Poisson), ya que premia la frecuencia.
@@ -101,12 +129,20 @@ Los gráficos generados se guardan automáticamente en la carpeta `graficos_loca
 - Los valores bajos de caché muestran un desempeño significativamente menor, lo que demuestra la importancia de una buena política de remoción combinada con un tamaño adecuado de almacenamiento temporal.
 - El sistema, pese a ser simulado, refleja correctamente fenómenos reales como saturación del caché, repetición de accesos y penalización por consultas únicas.
 
+Parte 2:
+
+- El sistema permite ahora:
+
+- Realizar un análisis exploratorio automático sobre los datos procesados, útil para detectar patrones espaciales, temporales o por tipo de incidente lo cual de detalla en el informe.
+
+
 ---
 
 ## 🧪 Tecnologías Utilizadas
 
 - Python 3.10+
 - Docker y Docker Compose
+- Apache Pig
 - MongoDB
 - NumPy
 - Pandas
@@ -117,4 +153,4 @@ Los gráficos generados se guardan automáticamente en la carpeta `graficos_loca
 
 ## 📜 Licencia
 
-Este proyecto es parte de la entrega del curso "Sistemas Distribuidos - Universidad Diego Portales (2025-1)". 
+Este proyecto es parte de la entrega del curso "Sistemas Distribuidos - Universidad Diego Portales (2025)". 
