@@ -92,7 +92,7 @@ CONFIGS_EVALUACION = {
 
 - Los gráficos generados se guardan automáticamente en la carpeta `graficos_local/`. Estos muestran la tasa de aciertos (hit rate) según política de caché, tamaño del caché, número de consultas y distribución de tráfico utilizada.
 
-- Los resultados agregados para esta parte 2 de Apache Pig se exportan como archivos .csv en la carpeta salida_local/, con las siguientes categorías:
+- Los resultados agregados para esta parte 2 de Apache Pig se exportan como archivos .csv en la carpeta salida_local/,  con las siguientes categorías:
 
   - `por_comuna`: Total de incidentes por comuna.
 
@@ -100,6 +100,7 @@ CONFIGS_EVALUACION = {
 
   - `por_fecha`: Evolución temporal de los eventos.
 
+y posteriormente se traspasan a la carpeta exportados donde dichos archivo se tranforman a .csv y con ello se logra realizar un analisis. Y luego graficar los resultados que se muentran en la carpeta `graficos_analisis/`
 
 ---
 
@@ -116,6 +117,7 @@ CONFIGS_EVALUACION = {
 - `exportador_csv.py`: Exporta eventos desde MongoDB a eventos.csv.
 - `Dockerfile`: Conteneriza el sistema, instala Java, Pig y configura entorno.
 - `docker-compose.yml`: Orquesta servicios para MongoDB y sistema Python.
+- `visualizador_csv.py`: Permite graficar los datos obtenidos mediante el procesamiento en apache pig 
 
 ---
 
@@ -133,7 +135,7 @@ Parte 2:
 
 - El sistema permite ahora:
 
-- Realizar un análisis exploratorio automático sobre los datos procesados, útil para detectar patrones espaciales, temporales o por tipo de incidente lo cual se detalla mas en el informe junto con los graficos respectivos. 
+- Realizar un análisis exploratorio automático sobre los datos procesados, útil para detectar patrones espaciales, temporales o por tipo de incidente lo cual se detalla mas en el informe junto con los graficos respectivos. O bien pueden verse en la carpeta `graficos_analisis/`
 
 
 ---
