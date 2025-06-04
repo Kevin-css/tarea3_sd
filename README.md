@@ -123,7 +123,7 @@ y posteriormente se traspasan a la carpeta exportados donde dichos archivo se tr
 
 ## 📈 Análisis de Resultados
 
-Parte 1:
+### Parte 1:
 
 - Las tasas de acierto aumentan consistentemente con tamaños mayores de caché.
 - LFU obtiene mejores resultados en distribuciones donde hay eventos repetidos frecuentemente (como Poisson), ya que premia la frecuencia.
@@ -131,12 +131,20 @@ Parte 1:
 - Los valores bajos de caché muestran un desempeño significativamente menor, lo que demuestra la importancia de una buena política de remoción combinada con un tamaño adecuado de almacenamiento temporal.
 - El sistema, pese a ser simulado, refleja correctamente fenómenos reales como saturación del caché, repetición de accesos y penalización por consultas únicas.
 
-Parte 2:
+### Parte 2:
+
+- En esta segunda etapa, el sistema fue extendido con un módulo de procesamiento distribuido basado en **Apache Pig**, una herramienta diseñada para transformar grandes volúmenes de datos mediante operaciones declarativas como filtros, agrupamientos y conteos, todo ejecutado sobre el modelo MapReduce.
+
+- Esta tecnología permite simular un pipeline distribuido similar a los usados en entornos reales de procesamiento de datos a gran escala, como sistemas de monitoreo de tráfico, redes sociales o análisis de logs. Su integración ayuda a reforzar conceptos clave del curso como **modelos de procesamiento paralelo**, **abstracción de tareas distribuidas** y **optimización de recursos a través del filtrado y la agrupación de información relevante**.
 
 - El sistema permite ahora:
+  - Realizar un análisis exploratorio automático sobre los datos procesados, útil para detectar patrones espaciales (por comuna), temporales (por fecha) o por tipo de incidente.
+  - Exportar los resultados en archivos `.csv` y generar visualizaciones automatizadas desde estos resultados usando Python.
+  - Mostrar cómo, a partir de un archivo de datos en bruto (`eventos.csv`), es posible construir un flujo completo de procesamiento distribuido que termina en resultados procesables y visuales.
 
-- Realizar un análisis exploratorio automático sobre los datos procesados, útil para detectar patrones espaciales, temporales o por tipo de incidente lo cual se detalla mas en el informe junto con los graficos respectivos. O bien pueden verse en la carpeta `graficos_analisis/`
+- Este flujo integrado, desde la generación hasta el análisis visual, refleja cómo los sistemas distribuidos permiten la transformación de grandes volúmenes de datos en información valiosa para la toma de decisiones, al tiempo que proporciona una experiencia concreta sobre cómo se estructuran y escalan estas arquitecturas en la práctica.
 
+> Los gráficos y resultados generados pueden revisarse en la carpeta `graficos_analisis/` o dentro del informe técnico en PDF.
 
 ---
 
