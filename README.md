@@ -133,7 +133,7 @@ Parte 2:
 
 - El sistema permite ahora:
 
-- Realizar un análisis exploratorio automático sobre los datos procesados, útil para detectar patrones espaciales, temporales o por tipo de incidente lo cual de detalla en el informe.
+- Realizar un análisis exploratorio automático sobre los datos procesados, útil para detectar patrones espaciales, temporales o por tipo de incidente lo cual se detalla mas en el informe junto con los graficos respectivos. 
 
 
 ---

@@ -32,4 +32,9 @@ else
   echo "⚠️ Advertencia: No se encontró salida_local/por_fecha/part-00000"
 fi
 
+echo "📊 Generando gráficos de análisis exploratorio..."
+python visualizador_csv.py
+
+
 echo "✅ Flujo completo terminado. Archivos CSV exportados en carpeta 'exportados/'"
+
