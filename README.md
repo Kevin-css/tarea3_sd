@@ -10,7 +10,7 @@ El objetivo final es proporcionar una herramienta que permita a tomadores de dec
 
 El flujo de datos sigue el siguiente pipeline:
 
-1. **Scraper (Python)**: Recolecta eventos de tráfico (simulados, inspirados en Waze).
+1. **Scraper (Python)**: Recolecta eventos de tráfico (Waze).
 2. **Data Storage (MongoDB)**: Almacena los eventos en bruto.
 3. **Procesamiento (Apache Pig)**: Procesa los datos para limpiar, filtrar y agregar métricas clave (incidentes por comuna, tipo y fecha).
 4. **Indexación (Elasticsearch)**: Un exportador en Python toma los datos procesados por Pig y los indexa en Elasticsearch, preparándolos para búsquedas y visualizaciones rápidas.
@@ -31,7 +31,7 @@ git clone https://github.com/Kevin-css/tarea3_sd.git
 cd tarea3_sd
 ```
 
-### 2. Clonar el Repositorio
+### 2. Ejecutar el Proyecto y levantar la aplicacion 
 
 ```bash
 docker-compose up --build
