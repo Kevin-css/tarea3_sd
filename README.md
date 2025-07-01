@@ -56,7 +56,7 @@ Una vez que los contenedores estén corriendo, abre tu navegador y ve a:
 http://localhost:5601
 ```
 
-Dentro de Kibana, podrás crear las visualizaciones y el dashboard para explorar los datos del tráfico.
+Dentro de Kibana, podrás visualizar el dashboard para explorar los datos del tráfico.
 
 📁 **Archivos Clave del Proyecto**
 
@@ -84,9 +84,8 @@ A diferencia de las etapas anteriores, el resultado final de este proyecto no so
   - **Geografía**: Gráfico de barras con el total de incidentes por comuna.
   - **Tipología**: Gráfico de torta que desglosa los incidentes por su tipo (choque, congestión, etc.).
   - **Temporalidad**: Gráfico de líneas que muestra la evolución de los incidentes a lo largo del tiempo.
-- **Interactividad y Filtrado Dinámico**: La principal ventaja del sistema es la capacidad de filtrar los datos en tiempo real. Al hacer clic en una comuna o un tipo de incidente en un gráfico, todos los demás gráficos del dashboard se actualizan automáticamente para reflejar la selección, permitiendo descubrir patrones complejos de manera intuitiva.
 
-Este sistema distribuido completo demuestra cómo transformar datos en bruto en conocimiento accionable, proveyendo una herramienta visual poderosa para la toma de decisiones informadas en la gestión del tráfico urbano.
+Este sistema distribuido completo demuestra cómo transformar datos en bruto en conocimiento accionable, proveyendo una herramienta visual poderosa para la toma de decisiones informadas en la gestión del tráfico.
 
 🛠️ **Tecnologías Utilizadas**
 
