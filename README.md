@@ -29,8 +29,9 @@ El flujo de datos sigue el siguiente pipeline:
 ```bash
 git clone https://github.com/Kevin-css/tarea2_sd.git 
 cd tarea2_sd
+```
 
-### 3. Ejecutar el Sistema Completo
+### 2. Clonar el Repositorio
 
 ```bash
 docker-compose up --build
