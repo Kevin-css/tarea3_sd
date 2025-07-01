@@ -5,6 +5,7 @@ from config import N_EVENTOS
 from exportador_csv import exportar_eventos_a_csv
 
 
+
 def main():
     print("🔗 Conectando a MongoDB...")
     db = conectar_mongo()
@@ -17,6 +18,7 @@ def main():
     print("🧪 Iniciando evaluación automatizada...")
     ejecutar_evaluacion()
     exportar_eventos_a_csv()
+   
 
 if __name__ == "__main__":
     main()

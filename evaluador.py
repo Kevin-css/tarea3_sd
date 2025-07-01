@@ -1,11 +1,16 @@
 import time
+import csv
+import os
 import matplotlib.pyplot as plt
 import pandas as pd
-import os
 from cache import crear_cache
 from mongodb_client import conectar_mongo
 from config import CONFIGS_EVALUACION, LAMBDA_POISSON, P_BINOMIAL
 from generador_trafico import generar_consultas
+from datetime import datetime
+
+# Crear carpeta si no existe
+os.makedirs("exportados", exist_ok=True)
 
 def evaluar_configuracion(n_consultas, cache_policy, cache_size, distribucion):
     db = conectar_mongo()
@@ -30,15 +35,30 @@ def evaluar_configuracion(n_consultas, cache_policy, cache_size, distribucion):
     fin = time.time()
     tasa_acierto = (aciertos / len(consultas)) * 100
 
-    return {
+    resultado = {
+        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "n_consultas": n_consultas,
         "cache_policy": cache_policy,
         "cache_size": cache_size,
         "distribucion": distribucion,
         "aciertos": aciertos,
         "tasa_acierto": round(tasa_acierto, 2),
-        "tiempo": round(fin - inicio, 3)
+        "tiempo_total_seg": round(fin - inicio, 3)
     }
+
+    guardar_metricas_cache(resultado)
+    return resultado
+
+def guardar_metricas_cache(result):
+    ruta_csv = "exportados/metricas_cache.csv"
+    headers = ["timestamp", "n_consultas", "cache_policy", "cache_size", "distribucion", "aciertos", "tasa_acierto", "tiempo_total_seg"]
+    escribir_encabezado = not os.path.exists(ruta_csv)
+
+    with open(ruta_csv, mode="a", newline="", encoding="utf-8") as archivo:
+        writer = csv.DictWriter(archivo, fieldnames=headers)
+        if escribir_encabezado:
+            writer.writeheader()
+        writer.writerow(result)
 
 def evaluar_todas_las_configuraciones():
     resultados = []
@@ -81,5 +101,4 @@ def ejecutar_evaluacion():
     resultados = evaluar_todas_las_configuraciones()
     graficar_resultados(resultados)
 
-if __name__ == "__main__":
-    ejecutar_evaluacion()
+

@@ -29,7 +29,8 @@ WORKDIR /app
 COPY . /app
 
 # Instalar dependencias Python
-RUN pip install --no-cache-dir pymongo cachetools numpy pandas matplotlib seaborn scikit-learn
+RUN pip3 install --upgrade pip
+RUN pip install --no-cache-dir pymongo cachetools numpy pandas matplotlib seaborn scikit-learn elasticsearch
 
 # Agregar script final que automatiza Python + Pig + copia CSV
 COPY post_pipeline.sh /app/post_pipeline.sh

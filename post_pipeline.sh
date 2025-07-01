@@ -35,6 +35,8 @@ fi
 echo "📊 Generando gráficos de análisis exploratorio..."
 python visualizador_csv.py
 
+echo "🚀 Ejecutando exportador_elasticsearch.py"
+python exportador_elasticsearch.py
 
 echo "✅ Flujo completo terminado. Archivos CSV exportados en carpeta 'exportados/'"
 

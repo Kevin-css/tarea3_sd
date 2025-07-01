@@ -25,3 +25,5 @@ def exportar_eventos_a_csv(ruta="exportados/eventos.csv"):
         escritor.writerows(eventos)
 
     print(f"✅ Eventos exportados a: {ruta}")
+
+

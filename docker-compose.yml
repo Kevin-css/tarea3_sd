@@ -9,13 +9,41 @@ services:
     volumes:
       - mongo-data:/data/db
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.17.0
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+
   sistema_sd:
     build: .
     container_name: sistema_sd
     depends_on:
       - mongo
+      - elasticsearch
     environment:
       - MONGO_URL=mongodb://mongo:27017
+      - ELASTIC_URL=http://elasticsearch:9200
     volumes:
       - ./exportados:/app/exportados
       - ./salida_local:/app/salida_local
@@ -23,3 +51,4 @@ services:
 
 volumes:
   mongo-data:
+  esdata:
