@@ -1,166 +1,114 @@
 
-# 🧠 Tarea 2 - Sistemas Distribuidos 2025-1
+# 🧠 Tarea 3: Sistema Distribuido de Análisis de Tráfico
 
-Este proyecto simula un sistema distribuido que recolecta, almacena, consulta y analiza eventos de tráfico utilizando herramientas modernas como Python, MongoDB, Docker y Apache Pig. Inspirado en el sistema Waze, permite evaluar configuraciones de caché y realizar procesamiento distribuido para obtener métricas agregadas relevantes para tomadores de decisiones como la Unidad de Control de Tránsito y municipios de la Región Metropolitana.
+Este proyecto implementa un sistema distribuido de extremo a extremo que recolecta, almacena, procesa y visualiza eventos de tráfico de la Región Metropolitana. El sistema utiliza **Python** para la recolección, **MongoDB** como base de datos primaria, **Apache Pig** para el procesamiento distribuido de datos y el **Stack Elástico (Elasticsearch y Kibana)** para la visualización interactiva de métricas y análisis.
 
+El objetivo final es proporcionar una herramienta que permita a tomadores de decisiones, como la Unidad de Control de Tránsito, explorar patrones de tráfico de manera dinámica y eficiente.
 
 ---
 
-## 📦 Estructura del Proyecto
+## 🏗️ Arquitectura del Sistema
 
-```
-Tarea_2_SD/
-├── cache.py
-├── config.py
-├── docker-compose.yml
-├── Dockerfile
-├── evaluador.py
-├── exportador_csv.py
-├── generador_eventos.py
-├── generador_trafico.py
-├── main.py
-├── mongodb_client.py
-├── procesar_eventos.pig
-├── README.md
-├── resultados_graficos/
-│ ├── binomial_LRU.png
-│ ├── binomial_LFU.png
-│ ├── poisson_LRU.png
-│ └── poisson_LFU.png
-├── exportados/
-│ └── eventos.csv
-└── salida_local/
-├── por_comuna/
-├── por_tipo/
-└── por_fecha/
+El flujo de datos sigue el siguiente pipeline:
 
-```
+1.  **Scraper (Python)**: Recolecta eventos de tráfico (simulados, inspirados en Waze).
+2.  **Data Storage (MongoDB)**: Almacena los eventos en bruto.
+3.  **Procesamiento (Apache Pig)**: Procesa los datos para limpiar, filtrar y agregar métricas clave (incidentes por comuna, tipo y fecha).
+4.  **Indexación (Elasticsearch)**: Un exportador en Python toma los datos procesados por Pig y los indexa en Elasticsearch, preparándolos para búsquedas y visualizaciones rápidas.
+5.  **Visualización (Kibana)**: Kibana se conecta a Elasticsearch para mostrar los datos en un dashboard interactivo con gráficos, mapas y tablas.
 
 ---
 
 ## 🚀 Instrucciones de Ejecución
 
-### 1. Clonar el repositorio
+### 1. Prerrequisitos
+
+* Tener instalado **Docker** y **Docker Compose**.
+
+### 2. Clonar el Repositorio
 
 ```bash
 git clone https://github.com/Kevin-css/tarea2_sd.git 
 cd tarea2_sd
-```
 
-### 2. Ejecutar con Docker Compose
+### 3. Ejecutar el Sistema Completo
 
 ```bash
 docker-compose up --build
-```
 
-Esto levantará dos contenedores:
+Este comando levantará cuatro servicios orquestados:
 
-- `mongo`: Base de datos MongoDB
-- `sistema_sd`: Sistema en Python que:
-  - Genera 10.000 eventos de tráfico con fechas, comunas y tipos variados.
-  - Inserta los eventos en MongoDB
-  - Simula tráfico y realiza evaluaciones de rendimiento usando caché (LRU y LFU).
-  - Evalúa distintas configuraciones de caché
-  - Exporta los eventos a un archivo CSV
-  - Genera gráficos con los resultados
-  - Ejecuta automáticamente un script Apache Pig para agrupar y analizar los datos por comuna, tipo de incidente y fecha
-  - Exporta los resultados del procesamiento en Pig a archivos CSV listos para análisis exploratorio
+mongodb: La base de datos para los datos en bruto.
 
----
+elasticsearch: El motor de búsqueda y analítica que almacena los datos procesados.
 
-## ⚙️ Configuración
+kibana: La plataforma de visualización.
 
-Edita el archivo `config.py` para modificar los parámetros de evaluación:
+app: El contenedor de Python que ejecuta el pipeline:
 
-```python
-N_EVENTOS = 10000  # Número fijo de eventos simulados
+Genera y guarda los eventos en MongoDB.
 
-LAMBDA_POISSON = 1    # λ para la distribución Poisson
-P_BINOMIAL = 0.5      # p para la distribución Binomial
+Ejecuta el script de Apache Pig para procesar los datos.
 
-CONFIGS_EVALUACION = {
-    "n_consultas": [500, 1000, 3000, 5000],
-    "cache_policies": ["LRU", "LFU"],
-    "cache_sizes": [50, 200, 500, 1500],
-    "distribuciones": ["poisson", "binomial"]
-}
-```
+Ejecuta el script exportador_elastic.py para enviar los resultados de Pig a Elasticsearch.
 
----
+Genera logs de rendimiento del scraper y del caché, y los envía a Elasticsearch.
 
-## 📊 Resultados
+### 4. Acceder a Kibana
+Una vez que los contenedores estén corriendo, abre tu navegador y ve a:
 
-- Los gráficos generados se guardan automáticamente en la carpeta `graficos_local/`. Estos muestran la tasa de aciertos (hit rate) según política de caché, tamaño del caché, número de consultas y distribución de tráfico utilizada.
+```bash
+http://localhost:5601
 
-- Los resultados agregados para esta parte 2 de Apache Pig se exportan como archivos .csv en la carpeta salida_local/,  con las siguientes categorías:
+Dentro de Kibana, podrás crear las visualizaciones y el dashboard para explorar los datos del tráfico.
 
-  - `por_comuna`: Total de incidentes por comuna.
+📁 Archivos Clave del Proyecto
+Tarea_3_SD/
+├── docker-compose.yml   # Orquesta todos los servicios
+├── Dockerfile             # Configura el contenedor de la aplicación Python
+├── exportador_elastic.py  # Envía datos de CSV a Elasticsearch
+├── procesar_eventos.pig   # Script de Pig para el análisis de datos
+├── main.py                # Punto de entrada que ejecuta el pipeline
+├── config.py              # Parámetros de configuración del sistema
+├── generador_eventos.py   # Simula los eventos de tráfico
+├── cache.py               # Lógica del sistema de caché
+└── ... otros archivos del sistema
 
-  - `por_tipo`: Frecuencia de tipos de incidentes.
+📊 Resultados y Análisis
 
-  - `por_fecha`: Evolución temporal de los eventos.
+A diferencia de las etapas anteriores, el resultado final de este proyecto no son gráficos estáticos, sino un dashboard interactivo en Kibana. Esta plataforma permite un análisis mucho más profundo y dinámico de los datos.
 
-y posteriormente se traspasan a la carpeta exportados donde dichos archivo se tranforman a .csv y con ello se logra realizar un analisis. Y luego graficar los resultados que se muentran en la carpeta `graficos_analisis/`
+Funcionalidades del Dashboard
+Visualización Integrada: El panel de control unifica métricas de rendimiento del sistema (logs del scraper y caché) con los datos de negocio (incidentes de tráfico).
 
----
+Análisis Multidimensional: Se pueden explorar los datos de tráfico clasificados por:
 
-## 📁 Archivos Clave
+Geografía: Gráfico de barras con el total de incidentes por comuna.
 
-- `main.py`: Punto de entrada del sistema
-- `generador_eventos.py`: Crea los eventos simulados con ID, latitud, longitud y tipo
-- `generador_trafico.py`: Simula consultas usando distribuciones estadísticas
-- `evaluador.py`: Ejecuta las combinaciones de evaluación y genera los gráficos
-- `cache.py`: Define las políticas LRU y LFU usando `cachetools`
-- `mongodb_client.py`: Conecta a la base de datos MongoDB
-- `config.py`: Permite configurar los parámetros del sistema
-- `procesar_eventos.pig`: Script de procesamiento distribuido en Apache Pig.
-- `exportador_csv.py`: Exporta eventos desde MongoDB a eventos.csv.
-- `Dockerfile`: Conteneriza el sistema, instala Java, Pig y configura entorno.
-- `docker-compose.yml`: Orquesta servicios para MongoDB y sistema Python.
-- `visualizador_csv.py`: Permite graficar los datos obtenidos mediante el procesamiento en apache pig 
+Tipología: Gráfico de torta que desglosa los incidentes por su tipo (choque, congestión, etc.).
 
----
+Temporalidad: Gráfico de líneas que muestra la evolución de los incidentes a lo largo del tiempo.
 
-## 📈 Análisis de Resultados
+Interactividad y Filtrado Dinámico: La principal ventaja del sistema es la capacidad de filtrar los datos en tiempo real. Al hacer clic en una comuna o un tipo de incidente en un gráfico, todos los demás gráficos del dashboard se actualizan automáticamente para reflejar la selección, permitiendo descubrir patrones complejos de manera intuitiva.
 
-### Parte 1:
+Este sistema distribuido completo demuestra cómo transformar datos en bruto en conocimiento accionable, proveyendo una herramienta visual poderosa para la toma de decisiones informadas en la gestión del tráfico urbano.
 
-- Las tasas de acierto aumentan consistentemente con tamaños mayores de caché.
-- LFU obtiene mejores resultados en distribuciones donde hay eventos repetidos frecuentemente (como Poisson), ya que premia la frecuencia.
-- LRU funciona bien en situaciones más distribuidas o aleatorias (como ciertas configuraciones de Binomial).
-- Los valores bajos de caché muestran un desempeño significativamente menor, lo que demuestra la importancia de una buena política de remoción combinada con un tamaño adecuado de almacenamiento temporal.
-- El sistema, pese a ser simulado, refleja correctamente fenómenos reales como saturación del caché, repetición de accesos y penalización por consultas únicas.
+🛠️ Tecnologías Utilizadas
+Lenguaje: Python 3.10+
 
-### Parte 2:
+Contenerización: Docker y Docker Compose
 
-- En esta segunda etapa, el sistema fue extendido con un módulo de procesamiento distribuido basado en **Apache Pig**, una herramienta diseñada para transformar grandes volúmenes de datos mediante operaciones declarativas como filtros, agrupamientos y conteos, todo ejecutado sobre el modelo MapReduce.
+Base de Datos Primaria: MongoDB
 
-- Esta tecnología permite simular un pipeline distribuido similar a los usados en entornos reales de procesamiento de datos a gran escala, como sistemas de monitoreo de tráfico, redes sociales o análisis de logs. Su integración ayuda a reforzar conceptos clave del curso como **modelos de procesamiento paralelo**, **abstracción de tareas distribuidas** y **optimización de recursos a través del filtrado y la agrupación de información relevante**.
+Procesamiento de Datos: Apache Pig
 
-- El sistema permite ahora:
-  - Realizar un análisis exploratorio automático sobre los datos procesados, útil para detectar patrones espaciales (por comuna), temporales (por fecha) o por tipo de incidente.
-  - Exportar los resultados en archivos `.csv` y generar visualizaciones automatizadas desde estos resultados usando Python.
-  - Mostrar cómo, a partir de un archivo de datos en bruto (`eventos.csv`), es posible construir un flujo completo de procesamiento distribuido que termina en resultados procesables y visuales.
+Búsqueda y Analítica: Elasticsearch
 
-- Este flujo integrado, desde la generación hasta el análisis visual, refleja cómo los sistemas distribuidos permiten la transformación de grandes volúmenes de datos en información valiosa para la toma de decisiones, al tiempo que proporciona una experiencia concreta sobre cómo se estructuran y escalan estas arquitecturas en la práctica.
+Visualización: Kibana
 
-> Los gráficos y resultados generados pueden revisarse en la carpeta `graficos_analisis/` o dentro del informe técnico en PDF.
+Librerías Python: elasticsearch, pymongo, pandas, etc.
 
----
+📜 Licencia
+Este proyecto es parte de la entrega del curso "Sistemas Distribuidos - Universidad Diego Portales (2025)".
 
-## 🧪 Tecnologías Utilizadas
 
-- Python 3.10+
-- Docker y Docker Compose
-- Apache Pig
-- MongoDB
-- NumPy
-- Pandas
-- Matplotlib
-- cachetools
-
----
-
-## 📜 Licencia
-
-Este proyecto es parte de la entrega del curso "Sistemas Distribuidos - Universidad Diego Portales (2025)". 
