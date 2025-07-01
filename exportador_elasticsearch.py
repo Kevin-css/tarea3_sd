@@ -6,6 +6,11 @@ from elasticsearch import Elasticsearch, helpers
 ELASTIC_URL = os.getenv("ELASTIC_URL", "http://localhost:9200")
 es = Elasticsearch(ELASTIC_URL)
 
+def eliminar_indice_si_existe(nombre_indice):
+    if es.indices.exists(index=nombre_indice):
+        es.indices.delete(index=nombre_indice)
+        print(f"🗑️ Índice '{nombre_indice}' eliminado.")
+
 def crear_indice_si_no_existe(nombre_indice, mapping):
     if not es.indices.exists(index=nombre_indice):
         es.indices.create(index=nombre_indice, body=mapping)
@@ -17,16 +22,14 @@ def agregar_encabezado_si_falta(file_path, encabezados):
     with open(file_path, encoding='utf-8') as f:
         primera_linea = f.readline().strip()
         if primera_linea != ",".join(encabezados):
-            # Leer todo el contenido actual
             f.seek(0)
             contenido = f.readlines()
-            # Reescribir con encabezado
             with open(file_path, mode='w', encoding='utf-8', newline='') as f_out:
                 writer = csv.writer(f_out)
                 writer.writerow(encabezados)
                 for linea in contenido:
                     fila = linea.strip().split(",")
-                    if len(fila) == len(encabezados):  # validación básica
+                    if len(fila) == len(encabezados):
                         writer.writerow(fila)
 
 def index_csv(file_path, index_name):
@@ -43,12 +46,13 @@ def index_csv(file_path, index_name):
         print(f"✅ Se indexaron {len(actions)} documentos en el índice '{index_name}'.")
 
 def parse_val(value):
+    value = value.strip()
     try:
-        if value.strip().lower() in ['true', 'false']:
-            return value.strip().lower() == 'true'
+        if value.lower() in ['true', 'false']:
+            return value.lower() == 'true'
         return float(value) if '.' in value else int(value)
     except:
-        return value.strip()
+        return value
 
 def exportador_elastic():
     base_path = "exportados"
@@ -120,7 +124,10 @@ def exportador_elastic():
         "metricas_cache": {
             "mappings": {
                 "properties": {
-                    "timestamp": { "type": "date" },
+                    "timestamp": {
+                        "type": "date",
+                        "format": "yyyy-MM-dd HH:mm:ss"
+                    },
                     "consultas": { "type": "integer" },
                     "hits": { "type": "integer" },
                     "misses": { "type": "integer" },
@@ -136,6 +143,7 @@ def exportador_elastic():
         if os.path.exists(ruta):
             if archivo in encabezados_por_archivo:
                 agregar_encabezado_si_falta(ruta, encabezados_por_archivo[archivo])
+            eliminar_indice_si_existe(indice)  # 👈 Elimina el índice anterior si existe
             crear_indice_si_no_existe(indice, mappings_generales[indice])
             index_csv(ruta, indice)
         else:

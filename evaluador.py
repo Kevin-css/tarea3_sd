@@ -51,14 +51,29 @@ def evaluar_configuracion(n_consultas, cache_policy, cache_size, distribucion):
 
 def guardar_metricas_cache(result):
     ruta_csv = "exportados/metricas_cache.csv"
-    headers = ["timestamp", "n_consultas", "cache_policy", "cache_size", "distribucion", "aciertos", "tasa_acierto", "tiempo_total_seg"]
-    escribir_encabezado = not os.path.exists(ruta_csv)
+    headers = ["timestamp", "consultas", "hits", "misses", "hit_rate", "miss_rate"]
+    escribir_encabezado = not os.path.exists(ruta_csv) or os.path.getsize(ruta_csv) == 0
+
+    misses = result["n_consultas"] - result["aciertos"]
+    hit_rate = round(result["tasa_acierto"], 2)
+    miss_rate = round(100 - result["tasa_acierto"], 2)
+
+    fila = {
+        "timestamp": result["timestamp"],
+        "consultas": result["n_consultas"],
+        "hits": result["aciertos"],
+        "misses": misses,
+        "hit_rate": hit_rate,
+        "miss_rate": miss_rate
+    }
 
     with open(ruta_csv, mode="a", newline="", encoding="utf-8") as archivo:
         writer = csv.DictWriter(archivo, fieldnames=headers)
         if escribir_encabezado:
             writer.writeheader()
-        writer.writerow(result)
+        writer.writerow(fila)
+
+
 
 def evaluar_todas_las_configuraciones():
     resultados = []
