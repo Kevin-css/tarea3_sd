@@ -27,8 +27,8 @@ El flujo de datos sigue el siguiente pipeline:
 ### 2. Clonar el Repositorio
 
 ```bash
-git clone https://github.com/Kevin-css/tarea2_sd.git 
-cd tarea2_sd
+git clone https://github.com/Kevin-css/tarea3_sd.git 
+cd tarea3_sd
 ```
 
 ### 2. Clonar el Repositorio
